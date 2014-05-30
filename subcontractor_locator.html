@@ -1,0 +1,169 @@
+<!doctype html>
+  <head>
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scable=no"/>
+	
+	<style>
+	
+		html, body {
+			margin: 0;
+			padding: 0;
+			border: none;
+			height: 100%;
+		}
+		
+		@media (min-width: 769px){
+  			.menu {
+  				height:22px;
+  			}
+  		}
+		
+		@media (max-width: 768px){
+  			.menu {
+  				height:44px;
+  			}
+  		}
+	
+	</style>
+    
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSFEHDWxaAIDTpvt9ekjLTqp1S9bfST2M&sensor=false">
+    </script>
+    
+    <script type="text/javascript">
+    
+     //width:32.5%;
+    
+    var centerLatLng = new google.maps.LatLng(40.770749,-73.202745);
+    var mapOptions = {
+        center: centerLatLng,
+        zoom: 8,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    	}
+    var map = null;	
+    var circleArr = new Array();
+    var markerArr = new Array();
+      
+	
+ function initialize() {
+      	var divElement = document.getElementById("map_canvas");
+        map = new google.maps.Map(divElement, mapOptions);
+        
+        geocoder = new google.maps.Geocoder();
+        
+        var options = {
+        	styleId: 2,
+    		query : {
+    			select : "Address",
+    			from : "1QNA6lg1ZGCqaC98creGLdLJ0bO83EactfVKrXKCy"
+    		}
+    	};
+    
+    	var layer = new google.maps.FusionTablesLayer(options);
+    	layer.setMap(map);
+    	
+      }
+      
+      function foundLocation(results,status){
+      
+      	console.log(results);
+      	
+      	if (status == google.maps.GeocoderStatus.OK){
+      		var lat = results[0].geometry.location.lat();
+      		var lng = results[0].geometry.location.lng();
+      		//alert("lat,lng: " + lat + "," + lng);
+      		
+      		var markerOptions = {
+      			position: results[0].geometry.location,
+      			map: map,
+      			icon: 'flag.png',
+      			clickable:false
+      		};
+      		
+      		markerArr.push(new google.maps.Marker(markerOptions));
+      		//marker = new google.maps.Marker(markerOptions);
+      		map.setCenter(results[0].geometry.location);
+      		
+      		var rad = [
+				[40234],  //25miles
+				[80468], //50miles
+				[160934]  //100miles
+			];
+      		
+      		for (var i=0; i<rad.length; i++) {
+				var circleOptions = {
+				center: results[0].geometry.location,
+				radius: rad[i][0],
+				map: map,
+				//fillColor: radColor[i][0],
+				fillOpacity:0,
+				clickable:false
+				};
+			
+			//circle = new google.maps.Circle(circleOptions);
+			circleArr.push(new google.maps.Circle(circleOptions));
+			}
+      	}
+      	
+      }
+      
+      function findLocation(){
+      
+      	clearAll();
+       
+      	var addrStr = document.getElementById("address").value;
+      	
+      	var request = {
+      		address: addrStr
+      	};
+      	
+      	geocoder.geocode(request,foundLocation);
+      	
+      }
+      
+    function clearAll(){
+    	for (var i=0; i<markerArr.length; i++) {
+    		markerArr[i].setMap(null);
+    	}
+    	markerArr = new Array();
+    	
+    	for (var i=0; i<circleArr.length; i++) {
+    		circleArr[i].setMap(null);
+    	}
+    	circleArr = new Array();    	
+    }
+    
+    function radius25(){
+    	map.setZoom(9);
+    	map.setCenter(markerArr[0].getPosition());
+    }
+    
+    function radius50(){
+    	map.setZoom(8);
+    	map.setCenter(markerArr[0].getPosition());
+    }    
+    
+    function radius100(){
+    	map.setZoom(7);
+    	map.setCenter(markerArr[0].getPosition());
+    }     
+      
+      
+    </script>
+  </head>
+  
+  <body onload="initialize()">
+  	
+  	Location:
+  	<input id="address" class="menu" type="text" style="width:50%"/>
+  	<input id="search" class="menu" type="image" style="position:absolute" onclick="findLocation()" value="Search" src="document_search.png" alt="Submit" />
+  	</br>
+  	Radius:
+  	<input id="25radius" class="menu" type="button" style="width:25%" onclick="radius25()" value="25mi" />
+    <input id="50radius" class="menu" type="button" style="width:25%" onclick="radius50()" value="50mi" />
+    <input id="100radius" class="menu" type="button" style="width:25%" onclick="radius100()" value="100mi" />
+    
+    <div id="map_canvas" style="width:100%; height:100%">
+   
+    </div>
+  
+  </body>  
+</html>
