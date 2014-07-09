@@ -11,16 +11,56 @@
 			height: 100%;
 		}
 		
+		#legend {
+      background: white;
+      padding: 10px;
+      margin: 10px;
+    }
+		
 		@media (min-width: 769px){
   			.menu {
   				height:22px;
   			}
+    	  .search {
+    	    height:5%;
+    	    padding-top: 10px;
+    	    margin-left: 10px;
+        }
+        .radius {
+    	    height:5%;
+    	    padding-top: 10px;
+    	    margin-left: 10px;
+        }
+        .map {
+        	border-left:1px solid #fff;
+        	position:absolute;
+        	height:85%;
+        	top:15%;
+        	bottom:0;
+        }
   		}
 		
 		@media (max-width: 768px){
   			.menu {
   				height:44px;
   			}
+  			.search {
+    	    height:10%;
+    	    padding-top: 10px;
+    	    margin-left: 10px;
+        }
+        .radius {
+    	    height:10%;
+    	    padding-bottom: 10px;
+    	    margin-left: 10px;
+        }
+        .map {
+        	border-left:1px solid #fff;
+        	position:absolute;
+        	height:80%;
+        	top:20%;
+        	bottom:0;
+        }
   		}
 	
 	</style>
@@ -45,6 +85,8 @@
  function initialize() {
       	var divElement = document.getElementById("map_canvas");
         map = new google.maps.Map(divElement, mapOptions);
+        
+        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
         
         geocoder = new google.maps.Geocoder();
         
@@ -73,7 +115,7 @@
       		var markerOptions = {
       			position: results[0].geometry.location,
       			map: map,
-      			icon: 'flag.png',
+      			icon: 'images/flag.png',
       			clickable:false
       		};
       		
@@ -150,18 +192,29 @@
   </head>
   
   <body onload="initialize()">
-  	
-  	Location:
-  	<input id="address" class="menu" type="text" style="width:50%"/>
-  	<input id="search" class="menu" type="image" style="position:absolute" onclick="findLocation()" value="Search" src="document_search.png" alt="Submit" />
-  	</br>
-  	Radius:
-  	<input id="25radius" class="menu" type="button" style="width:25%" onclick="radius25()" value="25mi" />
-    <input id="50radius" class="menu" type="button" style="width:25%" onclick="radius50()" value="50mi" />
-    <input id="100radius" class="menu" type="button" style="width:25%" onclick="radius100()" value="100mi" />
+  
+    <div class='search'>
+  	Job Location:
+    	<input id="address" class="menu" type="text" style="width:50%"/>
+    	<input id="search" class="menu" type="image" style="position:absolute" onclick="findLocation()" value="Search" src="images/document_search.png" alt="Submit" />
+    </div>
     
-    <div id="map_canvas" style="width:100%; height:100%">
+  	<div class='radius'>
+    	Radius:
+    	<input id="25radius" class="menu" type="button" style="width:25%" onclick="radius25()" value="25mi" />
+      <input id="50radius" class="menu" type="button" style="width:25%" onclick="radius50()" value="50mi" />
+      <input id="100radius" class="menu" type="button" style="width:25%" onclick="radius100()" value="100mi" />
+    </div> 
    
+    <div id="map_canvas" class='map' style="width:100%; height:80%"></div>
+    
+    <div id="legend">
+      <b>LEGEND</b>
+      <p>
+        <img src="images/marker_yellow.png" alt="Yellow" align="top">No Rating or Neutral<br>
+        <img src="images/marker_green.png" alt="Green" align="top">Preferred Installer<br>
+        <img src="images/marker_red.png" alt="Red" align="top">Prior Problems
+      </p>
     </div>
   
   </body>  
